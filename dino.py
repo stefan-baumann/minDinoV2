@@ -292,6 +292,8 @@ def vit_small(patch_size=14, num_register_tokens=0, **kwargs):
         **kwargs,
     )
 
+vit_small_reg = partial(vit_small, num_register_tokens=4)
+
 
 def vit_base(patch_size=14, num_register_tokens=0, **kwargs):
     return DinoVisionTransformer(
@@ -304,6 +306,8 @@ def vit_base(patch_size=14, num_register_tokens=0, **kwargs):
         **kwargs,
     )
 
+vit_base_reg = partial(vit_base, num_register_tokens=4)
+
 
 def vit_large(patch_size=14, num_register_tokens=0, **kwargs):
     return DinoVisionTransformer(
@@ -315,6 +319,8 @@ def vit_large(patch_size=14, num_register_tokens=0, **kwargs):
         num_register_tokens=num_register_tokens,
         **kwargs,
     )
+
+vit_large_reg = partial(vit_large, num_register_tokens=4)
 
 
 def vit_giant2(patch_size=14, num_register_tokens=0, **kwargs):
@@ -329,6 +335,8 @@ def vit_giant2(patch_size=14, num_register_tokens=0, **kwargs):
         **kwargs,
     )
 
+vit_giant2_reg = partial(vit_giant2, num_register_tokens=4)
+
 
 if __name__ == "__main__":
 
@@ -339,8 +347,13 @@ if __name__ == "__main__":
         ("dinov2_vitb14", vit_base),
         ("dinov2_vitl14", vit_large),
         ("dinov2_vitg14", vit_giant2),
+        # Register token versions currently fail the unit test
+        ("dinov2_vits14_reg", vit_small_reg),
+        ("dinov2_vitb14_reg", vit_base_reg),
+        ("dinov2_vitl14_reg", vit_large_reg),
+        ("dinov2_vitg14_reg", vit_giant2_reg),
     ]
-    for model_name, model_fn in model_list[3:]:
+    for model_name, model_fn in model_list:
         dino = torch.hub.load("facebookresearch/dinov2", model_name).cuda()
         model = model_fn().cuda()
         model.load_state_dict(dino.state_dict())
